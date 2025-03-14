@@ -1,1 +1,2 @@
-# com6338-8-8-Buteau-Nayllah
+# Assignment 8
+Create a weather forecast application using JavaScript
