@@ -1,11 +1,7 @@
 // Your code here
-
-
-var weatherAppDiv = document.getElementById('weather-app')
 var weatherSection = document.getElementById('weather')
 var form = document.querySelector('form')
 var inputEl = document.getElementById('weather-search')
-
 
 form.onsubmit = function(e) {
     e.preventDefault()
@@ -19,9 +15,18 @@ form.onsubmit = function(e) {
     
     fetch(fetchURL)
     .then(function(res) {
+        if (res.status != 200) {
+            throw new Error('Location not found')
+        }
         return res.json()
     })
     .then (viewLocation)
+    .catch(function(err) {
+        weatherSection.innerHTML = ""
+        var locationError = document.createElement('h2')
+        locationError.textContent = err.message
+        weatherSection.appendChild(locationError)
+    })
 }
 
 function viewLocation(location){
@@ -54,10 +59,25 @@ function viewLocation(location){
     weatherDescription.textContent = location.weather[0].description
     weatherSection.appendChild(weatherIconImg)
     weatherSection.appendChild(weatherDescription)
+
+    //Current Temperature
+    var currentTemp = document.createElement('p')
+    currentTemp.textContent = 'Current: ' + location.main.temp + '\u00B0F'
+    weatherSection.appendChild(currentTemp)
    
+    //Feels Like Temp
+    var feelsLikeTemp = document.createElement('p')
+    feelsLikeTemp.textContent = 'Feels like: ' + location.main.feels_like + '\u00B0F'
+    weatherSection.appendChild(feelsLikeTemp)
 
-
-
-    console.log(location)
-
+    //Last updated time
+    var updatedTimeSeconds = (location.dt)*1000
+    var date = new Date(updatedTimeSeconds)
+    var timeString = date.toLocaleTimeString('en-US', {
+        hour: 'numeric',
+        minute: '2-digit'
+    })
+    var updatedTime = document.createElement('p')
+    updatedTime.textContent = 'Last updated: ' + timeString
+    weatherSection.appendChild(updatedTime)
 }
